@@ -9,7 +9,7 @@ print('...')
 
 # print(sp.audio_features('https://open.spotify.com/track/31fMJwgrgNdk1IbWZEchX2?si=8aca4dc13f7542c0'))
 f = open('sample.txt', 'w')
-f.write(str(json.dumps(sp.audio_features("https://open.spotify.com/track/7H0ya83CMmgFcOhw0UB6ow?si=a17be5a722e84fc4"), indent=4)))
+f.write(str(json.dumps(sp.audio_features("https://open.spotify.com/track/043IFBhrqL9c1huP60EJmt?si=e7759d26317c4f51"), indent=4)))
 f.close()
 # print('done')
 # print(json.dumps(sp.artist(artist_id="6qqNVTkY8uBg9cP3Jd7DAH?si=jJuOLAzSSrG_WNgVn4R08w"), indent=2))
