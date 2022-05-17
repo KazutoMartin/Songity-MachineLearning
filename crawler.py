@@ -30,6 +30,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import json
+import sqlite3
 playlists = {
     'Rnb': ['https://open.spotify.com/playlist/7k2tDlptu3OHDMBVbO94zf?si=7788e5a682004beb'],
     'psytrance' : ['https://open.spotify.com/playlist/5PpLEyVEGJWhybBaZoGRQ3?si=211eae7f639a4ee6'],
@@ -82,6 +83,53 @@ playlists = {
     
 }
 
+db = sqlite3.connect('songs_features.db')
+
+sql = """CREATE TABLE IF NOT EXISTS Songs (
+                                        danceability CHAR(64),
+                                        energy CHAR(64),  
+                                        key CHAR(64),  
+                                        loudness CHAR(64),  
+                                        mode CHAR(64),  
+                                        speechiness CHAR(64),  
+                                        acousticness CHAR(64),  
+                                        instrumentalness CHAR(64),  
+                                        liveness CHAR(64),  
+                                        tempo CHAR(64),  
+                                        id CHAR(64),  
+                                        uri CHAR(64),  
+                                        track_href CHAR(64),  
+                                        analysis_url CHAR(64),  
+                                        duration_ms CHAR(64), 
+                                        time_signature CHAR(64)
+                                        );"""
+cursor = db.cursor()
+cursor.execute(sql)
+db.commit()
+
+def save_song(
+    danceability,
+    energy,  
+    key,  
+    loudness,  
+    mode,  
+    speechiness,  
+    acousticness,  
+    instrumentalness,  
+    liveness,  
+    tempo,  
+    id,  
+    uri,  
+    track_href,  
+    analysis_url,  
+    duration_ms, 
+    time_signature):
+                          
+    sql = f"""INSERT INTO Songs (danceability,energy,  key,  loudness,  mode,  speechiness,  acousticness,  instrumentalness,  liveness,  tempo,  id,  uri,  track_href,  analysis_url,  duration_ms, time_signature)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+    cursor = db.cursor()
+    cursor.execute(sql, danceability,energy,  key,  loudness,  mode,  speechiness,  acousticness,  instrumentalness,  liveness,  tempo,  id,  uri,  track_href,  analysis_url,  duration_ms, time_signature)
+    db.commit()
 auth_manager = SpotifyClientCredentials(client_id="d14a44a773b64759b4ec6df4438207e0", client_secret="8d75260500d44106a9de3f7e8d836bc1")
 sp = spotipy.Spotify(auth_manager=auth_manager)
 count = 0
@@ -98,7 +146,9 @@ for key in playlists:
             # print(json.dumps(pl['items'], indent=2))
             for track in pl['items']:
                 try:
-                    # print(track['track']['name'])
+                    print(track['track']['id'])
+                    features = sp.audio_features(track['track']['id'])[0]
+                    save_song(features['danceability'],features['energy'],  features['key'],  features['loudness'],  features['mode'],  features['speechiness'],  features['acousticness'],  features['instrumentalness'],  features['liveness'],  features['tempo'],  features['id'],  features['uri'],  features['track_href'],  features['analysis_url'],  features['duration_ms'], features['time_signature'])
                     count += 1
                 except TypeError:
                     continue
